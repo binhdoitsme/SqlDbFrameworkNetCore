@@ -3,6 +3,12 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Binh Do</Authors>
+    <Company>Active Service Provider Network</Company>
+    <Description>A simple database query framework based on Fluent API design.</Description>
+    <ApplicationIcon />
+    <StartupObject />
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>

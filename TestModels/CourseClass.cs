@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
 using System.Linq;
 
-namespace FinalProjectEMS.Models
+namespace SqlDbFrameworkNetCore.TestModels
 {
     public class CourseClass
     {

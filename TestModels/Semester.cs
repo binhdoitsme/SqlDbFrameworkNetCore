@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FinalProjectEMS.Models
+namespace SqlDbFrameworkNetCore.TestModels
 {
     public class Semester
     {
