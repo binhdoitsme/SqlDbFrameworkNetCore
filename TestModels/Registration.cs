@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace FinalProjectEMS.Models
+namespace SqlDbFrameworkNetCore.TestModels
 {
     public class Registration
     {

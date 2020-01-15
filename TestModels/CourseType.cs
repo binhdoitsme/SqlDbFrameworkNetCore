@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinalProjectEMS.Models
+namespace SqlDbFrameworkNetCore.TestModels
 {
     public class CourseType
     {

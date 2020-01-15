@@ -1,5 +1,4 @@
-﻿using FinalProjectEMS.Models;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SqlDbFrameworkNetCore.Helpers;
 using SqlDbFrameworkNetCore.Linq;
@@ -10,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace SqlDbFrameworkNetCore
 {
-    class Program
+    internal class Program
     {
         static void Main()
         {
@@ -98,7 +97,7 @@ namespace SqlDbFrameworkNetCore
             //                            }
             //                        })
             //                        .ExecuteNonQuery();
-            var affectedRows = builder.DeleteFrom<Semester>().Where(s => s.SemesterId == 6).ExecuteNonQuery();
+            //var affectedRows = builder.DeleteFrom<Semester>().Where(s => s.SemesterId == 6).ExecuteNonQuery();
 
             //var affectedRows = builder.Update<Semester>()
             //    .Set(new
@@ -108,7 +107,7 @@ namespace SqlDbFrameworkNetCore
             //    .Where(s => s.SemesterId == 6)
             //    .ExecuteNonQuery();
 
-            Console.WriteLine($"Query finished, {affectedRows} row(s) affected.");
+            //Console.WriteLine($"Query finished, {affectedRows} row(s) affected.");
         }
     }
 }
