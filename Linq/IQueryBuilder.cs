@@ -14,6 +14,8 @@ namespace SqlDbFrameworkNetCore.Linq
         IDeleteQueryBuilder<TEntity> DeleteFrom<TEntity>();
 
         int ExecuteNonQuery();
+        int ExecuteNonQuery(string rawSql);
+        IEnumerable<TEntity> ExecuteQuery<TEntity>(string rawSql);
         void Clear();
     }
 

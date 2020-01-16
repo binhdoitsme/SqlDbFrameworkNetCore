@@ -1,4 +1,5 @@
-﻿using SqlDbFrameworkNetCore.Helpers;
+﻿using Dapper;
+using SqlDbFrameworkNetCore.Helpers;
 using SqlDbFrameworkNetCore.Linq;
 using System;
 using System.Collections;
@@ -43,9 +44,9 @@ namespace SqlDbFrameworkNetCore.Linq
 
         public IInsertQueryBuilder<TEntity> InsertInto<TEntity>()
         {
-            string columnStr = string.Empty;
             QueryStringBuilder.Append($"INSERT INTO " +
-                $"{StringToolkit.PascalToUnderscore(typeof(TEntity).Name)}");
+                $"{StringToolkit.PascalToUnderscore(typeof(TEntity).Name)} " +
+                $"{PropertyToolkit.BuildInsertString(PropertyToolkit.GetInsertProperties<TEntity>())}");
             return new InsertQueryBuilder<TEntity>(this);
         }
 
@@ -91,6 +92,7 @@ namespace SqlDbFrameworkNetCore.Linq
 
         public virtual int ExecuteNonQuery()
         {
+            Console.WriteLine(this.ToString());
             DbCommand cmd = Connection.CreateCommand();
             if (ParameterCollection != null)
             {
@@ -106,6 +108,20 @@ namespace SqlDbFrameworkNetCore.Linq
             Clear();
 
             return affectedRows;
+        }
+
+        public virtual int ExecuteNonQuery(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            DbCommand cmd = Connection.CreateCommand();
+            cmd.CommandText = rawSql;
+            return cmd.ExecuteNonQuery();
+        }
+
+        public virtual IEnumerable<T> ExecuteQuery<T>(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            return Connection.Query<T>(rawSql);
         }
     }
 
