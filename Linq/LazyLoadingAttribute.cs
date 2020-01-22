@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    class LazyLoadingAttribute : Attribute
+    public class LazyLoadingAttribute : Attribute
     {
     }
 }

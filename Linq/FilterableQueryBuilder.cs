@@ -58,10 +58,9 @@ namespace SqlDbFrameworkNetCore.Linq
                         QueryStringBuilder.Replace(m.Value,
                             $"{StringToolkit.PascalToUnderscore(alias.Key.Name)} {alias.Value} ");
                     }
-
                 }
             }
-
+            QueryStringBuilder.Replace("  ", " ");
         }
     }
 }

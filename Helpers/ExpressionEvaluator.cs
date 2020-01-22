@@ -63,7 +63,9 @@ namespace SqlDbFrameworkNetCore.Helpers
             }
             else
             {
-                var newRightOp = (rightOp as ConstantExpression).Value;
+                var newRightOp = rightOp is ConstantExpression ? 
+                                (rightOp as ConstantExpression).Value 
+                                : rightOp;
                 if (newRightOp is DateTime)
                 {
                     rightHandSide = $"'{(rightOp as DateTime?).Value.ToString("yyyy-MM-dd")}'";
