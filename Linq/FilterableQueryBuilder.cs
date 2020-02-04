@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    internal class FilterableQueryBuilder<TEntity> : QueryBuilder<TEntity>, IFilterableQueryBuilder<TEntity>
+    internal class FilterableQueryBuilder<TEntity> : QueryBuilder<TEntity>, IFilterableQueryBuilder<TEntity> where TEntity : class
     {
         public FilterableQueryBuilder(QueryBuilder builder) : base(builder) { }
 

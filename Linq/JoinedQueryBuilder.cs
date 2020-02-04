@@ -10,7 +10,8 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    internal class JoinedQueryBuilder<TEntity, T1> : SelectQueryBuilder<TEntity>, IJoinedQueryBuilder<TEntity, T1>
+    internal class JoinedQueryBuilder<TEntity, T1> 
+        : SelectQueryBuilder<TEntity>, IJoinedQueryBuilder<TEntity, T1> where TEntity : class
     {
         public JoinedQueryBuilder(QueryBuilder queryStringBuilder) : base(queryStringBuilder) { }
 
@@ -48,7 +49,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     internal class JoinedQueryBuilder<TEntity, T1, T2> 
-        : JoinedQueryBuilder<TEntity, T1>, IJoinedQueryBuilder<TEntity, T1, T2>
+        : JoinedQueryBuilder<TEntity, T1>, IJoinedQueryBuilder<TEntity, T1, T2> where TEntity : class
     {
         public JoinedQueryBuilder(QueryBuilder queryStringBuilder) : base(queryStringBuilder) { }
 
@@ -87,6 +88,7 @@ namespace SqlDbFrameworkNetCore.Linq
 
     internal class JoinedQueryBuilder<TEntity, T1, T2, T3>
         : JoinedQueryBuilder<TEntity, T1, T2>, IJoinedQueryBuilder<TEntity, T1, T2, T3>
+        where TEntity : class
     {
         public JoinedQueryBuilder(QueryBuilder queryStringBuilder) : base(queryStringBuilder) { }
 

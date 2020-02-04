@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    public interface IUpdateQueryBuilder<TEntity> : IFilterableQueryBuilder<TEntity>
+    public interface IUpdateQueryBuilder<TEntity> : IFilterableQueryBuilder<TEntity> where TEntity : class
     {
         IFilterableQueryBuilder<TEntity> Set(dynamic newValues);
     }

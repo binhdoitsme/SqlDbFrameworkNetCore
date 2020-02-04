@@ -7,7 +7,8 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    internal class SelectQueryBuilder<TEntity> : SortableQueryBuilder<TEntity>, ISelectQueryBuilder<TEntity>
+    internal class SelectQueryBuilder<TEntity> 
+        : SortableQueryBuilder<TEntity>, ISelectQueryBuilder<TEntity> where TEntity : class
     {
         internal SelectQueryBuilder(QueryBuilder queryStringBuilder) : base(queryStringBuilder) { }
 

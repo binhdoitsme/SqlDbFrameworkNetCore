@@ -6,7 +6,7 @@ using System.Text;
 namespace SqlDbFrameworkNetCore.Linq
 {
     public interface IJoinedQueryBuilder<TEntity, T1> 
-        : ISelectQueryBuilder<TEntity>
+        : ISelectQueryBuilder<TEntity> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1> On(Expression<Func<TEntity, T1, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1> Where(Expression<Func<TEntity, T1, bool>> predicate);
@@ -16,7 +16,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2> 
-        : IJoinedQueryBuilder<TEntity, T1>
+        : IJoinedQueryBuilder<TEntity, T1> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1, T2> On(Expression<Func<TEntity, T1, T2, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1, T2> Where(Expression<Func<TEntity, T1, T2, bool>> predicate);
@@ -26,7 +26,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3> 
-        : IJoinedQueryBuilder<TEntity, T1, T2>
+        : IJoinedQueryBuilder<TEntity, T1, T2> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1, T2, T3> On(Expression<Func<TEntity, T1, T2, T3, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1, T2, T3> Where(Expression<Func<TEntity, T1, T2, T3, bool>> predicate);
@@ -36,7 +36,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4> 
-        : IJoinedQueryBuilder<TEntity, T1, T2, T3>
+        : IJoinedQueryBuilder<TEntity, T1, T2, T3> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4> On(Expression<Func<TEntity, T1, T2, T3, T4, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4> Where(Expression<Func<TEntity, T1, T2, T3, T4, bool>> predicate);
@@ -46,7 +46,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5> 
-        : IJoinedQueryBuilder<TEntity, T1, T2, T3, T4>
+        : IJoinedQueryBuilder<TEntity, T1, T2, T3, T4> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5> On(Expression<Func<TEntity, T1, T2, T3, T4, T5, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5> Where(Expression<Func<TEntity, T1, T2, T3, T4, T5, bool>> predicate);
@@ -56,7 +56,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6> 
-        : IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5>
+        : IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6> On(Expression<Func<TEntity, T1, T2, T3, T4, T5, T6, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6> Where(Expression<Func<TEntity, T1, T2, T3, T4, T5, T6, bool>> predicate);
@@ -66,7 +66,7 @@ namespace SqlDbFrameworkNetCore.Linq
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6, T7> 
-        : IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6>
+        : IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6> where TEntity : class
     {
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6, T7> On(Expression<Func<TEntity, T1, T2, T3, T4, T5, T6, T7, bool>> predicate);
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6, T7> Where(Expression<Func<TEntity, T1, T2, T3, T4, T5, T6, T7, bool>> predicate);

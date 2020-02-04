@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    internal class SortableQueryBuilder<TEntity> 
-        : FilterableQueryBuilder<TEntity>, ISortableQueryBuilder<TEntity>
+    internal class SortableQueryBuilder<TEntity>
+        : FilterableQueryBuilder<TEntity>, ISortableQueryBuilder<TEntity> where TEntity : class
     {
         internal SortableQueryBuilder(QueryBuilder builder) : base(builder) { }
 
@@ -67,6 +68,15 @@ namespace SqlDbFrameworkNetCore.Linq
             Console.WriteLine(this.ToString());
             var rawResult = Connection.Query(this.ToString());
             IEnumerable <TEntity> result = ObjectMapper.ToObjectCollection<TEntity>(rawResult);
+            Clear();
+            return result;
+        }
+
+        public async Task<IEnumerable<TEntity>> ExecuteQueryAsync()
+        {
+            Console.WriteLine(this.ToString());
+            var rawResult = await Connection.QueryAsync(this.ToString());
+            IEnumerable<TEntity> result = ObjectMapper.ToObjectCollection<TEntity>(rawResult);
             Clear();
             return result;
         }

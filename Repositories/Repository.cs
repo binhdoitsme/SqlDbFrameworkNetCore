@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace SqlDbFrameworkNetCore.Repositories
 {
-    public class Repository : IRepository
+    public partial class Repository : IRepository
     {
         private readonly DbConnection Connection;
         protected readonly IQueryBuilder QueryBuilder;
@@ -24,25 +24,25 @@ namespace SqlDbFrameworkNetCore.Repositories
             QueryBuilder = connection.CreateQueryBuilder();
         }
 
-        public void Add<T>(T item)
+        public void Add<T>(T item) where T : class
         {
             QueryBuilder.InsertInto<T>().Values(new T[] { item })
                         .ExecuteNonQuery();
         }
 
-        public void AddRange<T>(IEnumerable<T> items)
+        public void AddRange<T>(IEnumerable<T> items) where T : class
         {
             T[] addedItems = items.ToArray();
             QueryBuilder.InsertInto<T>().Values(addedItems)
                         .ExecuteNonQuery();
         }
 
-        public IEnumerable<T> All<T>()
+        public IEnumerable<T> All<T>() where T : class
         {
             return QueryBuilder.Select<T>().ExecuteQuery();
         }
 
-        public bool Contains<T>(T item)
+        public bool Contains<T>(T item) where T : class
         {
             string whereStr = $"WHERE {ObjectEvaluator.ToWhereString<T>(item)}";
             string queryStr = $"SELECT * " +
@@ -51,13 +51,13 @@ namespace SqlDbFrameworkNetCore.Repositories
             return QueryBuilder.ExecuteQuery<T>(queryStr).Any();
         }
 
-        public IEnumerable<T> FindAll<T>(Expression<Func<T, bool>> predicate)
+        public IEnumerable<T> FindAll<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             return QueryBuilder.Select<T>().Where(predicate)
                                 .ExecuteQuery();
         }
 
-        public virtual T FindByKey<T>(Expression<Func<T, object>> key, object value)
+        public virtual T FindByKey<T>(Expression<Func<T, object>> key, object value) where T : class
         {
             string leftHandSide = ExpressionEvaluator.BuildOrderByQueryString(key, false)
                                                     .Replace("ORDER BY ", "");
@@ -69,38 +69,38 @@ namespace SqlDbFrameworkNetCore.Repositories
             return QueryBuilder.ExecuteQuery<T>(queryStr).FirstOrDefault();
         }
 
-        public T FindFirst<T>(Expression<Func<T, bool>> predicate)
+        public T FindFirst<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             return QueryBuilder.Select<T>().Where(predicate).Limit(1)
                     .ExecuteQuery()
                     .FirstOrDefault();
         }
 
-        public void Remove<T>(T item)
+        public void Remove<T>(T item) where T : class
         {
             string queryStr = $"DELETE FROM {StringToolkit.PascalToUnderscore(typeof(T).Name)} " +
                 $"WHERE {ObjectEvaluator.ToWhereString<T>(item)}";
             QueryBuilder.ExecuteQuery<T>(queryStr);
         }
 
-        public void RemoveAll<T>(Expression<Func<T, bool>> predicate)
+        public void RemoveAll<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            QueryBuilder.DeleteFrom<T>().Where(predicate);
+            QueryBuilder.DeleteFrom<T>().Where(predicate).ExecuteNonQuery();
         }
 
-        public void RemoveRange<T>(IEnumerable<T> items)
+        public void RemoveRange<T>(IEnumerable<T> items) where T : class
         {
             string queryStr = $"DELETE FROM {StringToolkit.PascalToUnderscore(typeof(T).Name)} " +
                 $"WHERE {ObjectEvaluator.ToWhereString<T>(items)}";
             QueryBuilder.ExecuteQuery<T>(queryStr);
         }
 
-        public void Set<T>(Expression<Func<T, bool>> predicate, object newValue)
+        public void Set<T>(Expression<Func<T, bool>> predicate, object newValue) where T : class
         {
             QueryBuilder.Update<T>().Set(newValue).Where(predicate).ExecuteNonQuery();
         }
 
-        public void Set<T>(T oldValue, T newValue)
+        public void Set<T>(T oldValue, T newValue) where T : class
         {
             string setStr = $"SET {ObjectEvaluator.ToWhereString<T>(newValue).Replace(" AND ", ", \n")}";
             string whereStr = $"WHERE {ObjectEvaluator.ToWhereString<T>(oldValue)}";
@@ -110,7 +110,7 @@ namespace SqlDbFrameworkNetCore.Repositories
         }
     }
 
-    public class Repository<T> : Repository, IRepository<T> where T : class
+    public partial class Repository<T> : Repository, IRepository<T> where T : class
     {
         public Repository(DbConnection connection) : base(connection)
         {

@@ -17,9 +17,18 @@ namespace SqlDbFrameworkNetCore.Helpers
 
         public static bool ContainSqlKeyword(this string str)
         {
+            if (str.Length < 2) { return false; }
+            string _str = str[1..^1];
+            if (_str.Contains("'")
+                    || _str.Contains("`")
+                    || _str.Contains("\""))
+            {
+                return true;
+            }
             foreach (string keyword in SQL_KEYWORDS)
             {
-                if (str.Contains($" {keyword.ToLower()} "))
+                if (_str.Contains($" {keyword.ToLower()} ")
+                    || _str.Contains($" {keyword.ToUpper()}"))
                 {
                     return true;
                 }

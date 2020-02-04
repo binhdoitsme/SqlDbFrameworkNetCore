@@ -7,7 +7,7 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    internal class InsertQueryBuilder<TEntity> : QueryBuilder<TEntity>, IInsertQueryBuilder<TEntity>
+    internal class InsertQueryBuilder<TEntity> : QueryBuilder<TEntity>, IInsertQueryBuilder<TEntity> where TEntity : class
     {
         internal InsertQueryBuilder(QueryBuilder builder) : base(builder) { }
 

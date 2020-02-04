@@ -31,20 +31,12 @@ namespace SqlDbFrameworkNetCore.Helpers
         public static string BuildWhereQueryString(LambdaExpression expression)
         {
             string conditionStr = BuildConditionQueryString(expression);
-            if (conditionStr.ContainSqlKeyword())
-            {
-                throw new InvalidOperationException("Are you trying to perform SQL Injection? :)");
-            }
             return $"WHERE {conditionStr}";
         }
 
         public static string BuildOnConditionString(LambdaExpression expression)
         {
             string conditionStr = BuildConditionQueryString(expression);
-            if (conditionStr.ContainSqlKeyword())
-            {
-                throw new InvalidOperationException("Are you trying to perform SQL Injection? :)");
-            }
             return $"ON {conditionStr}";
         }
 
@@ -78,10 +70,15 @@ namespace SqlDbFrameworkNetCore.Helpers
                 {
                     rightHandSide = rightOp.ToString();
                 }
-
+            }
+            if (rightHandSide.ContainSqlKeyword())
+            {
+                throw new SqlInjectionException("Are you trying to perform SQL Injection? :)");
             }
             return string.Format("{0} {1} {2}",
-                leftHandSide.Replace("'", ""),
+                leftHandSide.Replace("'", "")
+                            .Replace("\"", "")
+                            .Replace("`", ""),
                 EXPRESSION_MAP[simpleExpression.NodeType],
                 rightHandSide);
         }

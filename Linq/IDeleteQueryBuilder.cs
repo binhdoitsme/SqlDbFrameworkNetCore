@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    public interface IDeleteQueryBuilder<TEntity> : IFilterableQueryBuilder<TEntity>
+    public interface IDeleteQueryBuilder<TEntity> : IFilterableQueryBuilder<TEntity> where TEntity : class
     {
     }
 }

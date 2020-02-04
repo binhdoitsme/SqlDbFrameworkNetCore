@@ -7,7 +7,8 @@ using System.Text.Json;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
-    internal class UpdateQueryBuilder<TEntity> : FilterableQueryBuilder<TEntity>, IUpdateQueryBuilder<TEntity>
+    internal class UpdateQueryBuilder<TEntity> 
+        : FilterableQueryBuilder<TEntity>, IUpdateQueryBuilder<TEntity> where TEntity : class
     {
         // additional attribute
         protected IDictionary<string, object> ParameterMap;

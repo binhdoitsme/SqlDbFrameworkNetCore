@@ -35,14 +35,14 @@ namespace SqlDbFrameworkNetCore.Linq
             this.ParameterCollection = builder.ParameterCollection;
         }
 
-        public IDeleteQueryBuilder<TEntity> DeleteFrom<TEntity>()
+        public IDeleteQueryBuilder<TEntity> DeleteFrom<TEntity>() where TEntity : class
         {
             QueryStringBuilder.Append($"DELETE FROM " +
                 $"{StringToolkit.PascalToUnderscore(typeof(TEntity).Name)}");
             return new DeleteQueryBuilder<TEntity>(this);
         }
 
-        public IInsertQueryBuilder<TEntity> InsertInto<TEntity>()
+        public IInsertQueryBuilder<TEntity> InsertInto<TEntity>() where TEntity : class
         {
             QueryStringBuilder.Append($"INSERT INTO " +
                 $"{StringToolkit.PascalToUnderscore(typeof(TEntity).Name)} " +
@@ -51,6 +51,7 @@ namespace SqlDbFrameworkNetCore.Linq
         }
 
         public ISelectQueryBuilder<TEntity> Select<TEntity>(params Expression<Func<TEntity, object>>[] columns)
+            where TEntity : class
         {
             string columnStr;
             if (columns.Length == 0)
@@ -75,6 +76,7 @@ namespace SqlDbFrameworkNetCore.Linq
         }
 
         public IUpdateQueryBuilder<TEntity> Update<TEntity>()
+            where TEntity : class
         {
             QueryStringBuilder.Append($"UPDATE {StringToolkit.PascalToUnderscore(typeof(TEntity).Name)}");
             return new UpdateQueryBuilder<TEntity>(this);
@@ -110,6 +112,26 @@ namespace SqlDbFrameworkNetCore.Linq
             return affectedRows;
         }
 
+        public virtual async Task<int> ExecuteNonQueryAsync()
+        {
+            Console.WriteLine(this.ToString());
+            DbCommand cmd = Connection.CreateCommand();
+            if (ParameterCollection != null)
+            {
+                foreach (var param in ParameterCollection)
+                {
+                    cmd.Parameters.Add(param);
+                }
+            }
+            cmd.CommandText = ToString();
+            int affectedRows = await cmd.ExecuteNonQueryAsync();
+
+            // clear this after query finishes
+            Clear();
+
+            return affectedRows;
+        }
+
         public virtual int ExecuteNonQuery(string rawSql)
         {
             Console.WriteLine(rawSql);
@@ -118,18 +140,44 @@ namespace SqlDbFrameworkNetCore.Linq
             return cmd.ExecuteNonQuery();
         }
 
-        public virtual IEnumerable<T> ExecuteQuery<T>(string rawSql)
+        public virtual async Task<int> ExecuteNonQueryAsync(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            DbCommand cmd = Connection.CreateCommand();
+            cmd.CommandText = rawSql;
+            return await cmd.ExecuteNonQueryAsync();
+        }
+
+        public virtual IEnumerable<T> ExecuteQuery<T>(string rawSql) where T : class
         {
             Console.WriteLine(rawSql);
             return Connection.Query<T>(rawSql);
         }
+
+        public virtual async Task<IEnumerable<T>> ExecuteQueryAsync<T>(string rawSql) where T : class
+        {
+            Console.WriteLine(rawSql);
+            return await Connection.QueryAsync<T>(rawSql);
+        }
     }
 
-    class QueryBuilder<TEntity> : QueryBuilder, IQueryBuilder<TEntity>
+    class QueryBuilder<TEntity> : QueryBuilder, IQueryBuilder<TEntity> where TEntity : class
     {
         public QueryBuilder(QueryBuilder builder) : base(builder) 
         {
             
+        }
+
+        public virtual IEnumerable<TEntity> ExecuteQuery(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            return Connection.Query<TEntity>(rawSql);
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> ExecuteQueryAsync(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            return await Connection.QueryAsync<TEntity>(rawSql);
         }
     }
 }

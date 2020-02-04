@@ -1,19 +1,20 @@
-﻿using System;
+﻿using SqlDbFrameworkNetCore.Linq;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SqlDbFrameworkNetCore.Repositories
 {
-    /// <summary>
-    /// Non-generic version of Repository
-    /// </summary>
     public partial interface IRepository
     {
         /// <summary>
         /// Gets all records from the corresponding entity table.
         /// </summary>
         /// <returns>A collection of entities of type T.</returns>
-        IEnumerable<T> All<T>() where T : class;
+        Task<IEnumerable<T>> AllAsync<T>() where T : class;
 
         /// <summary>
         /// Find record in database using values of [Key] fields.
@@ -21,26 +22,26 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <returns>The first (also the only) object matches the keys.</returns>
-        T FindByKey<T>(Expression<Func<T, object>> key, object value) where T : class;
+        Task<T> FindByKeyAsync<T>(Expression<Func<T, object>> key, object value) where T : class;
         /// <summary>
         /// Find the first record in database matching a set of conditions.
         /// </summary>
         /// <param name="predicate">Representing the conditions to lookup.</param>
         /// <returns>The first record matches <c>predicate</c>.</returns>
-        T FindFirst<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task<T> FindFirstAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         /// <summary>
         /// Find all records in database matching a set of conditions.
         /// </summary>
         /// <param name="predicate">Representing the conditions to lookup.</param>
         /// <returns>The collection of eligible objects.</returns>
-        IEnumerable<T> FindAll<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task<IEnumerable<T>> FindAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
 
         /// <summary>
         /// Lookup in the database to see if the item exists in the database.
         /// </summary>
         /// <param name="item">The item to lookup.</param>
         /// <returns>True if item exists in database, false otherwise</returns>
-        bool Contains<T>(T item) where T : class;
+        Task<bool> ContainsAsync<T>(T item) where T : class;
 
         // insert methods
         /// <summary>
@@ -49,14 +50,14 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="item">The item to add.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void Add<T>(T item) where T : class;
+        Task AddAsync<T>(T item) where T : class;
         /// <summary>
         /// Add a collection of items to the database.
         /// </summary>
         /// <param name="items">The items to add.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void AddRange<T>(IEnumerable<T> items) where T : class;
+        Task AddRangeAsync<T>(IEnumerable<T> items) where T : class;
 
         // remove methods
         /// <summary>
@@ -65,21 +66,21 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="item">The item to remove.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void Remove<T>(T item) where T : class;
+        Task RemoveAsync<T>(T item) where T : class;
         /// <summary>
         /// Remove all items matching a set of conditions from the database.
         /// </summary>
         /// <param name="predicate">Representing the set of conditions.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void RemoveAll<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task RemoveAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         /// <summary>
         /// Remove a collection of items from the database.
         /// </summary>
         /// <param name="items">The item to remove.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void RemoveRange<T>(IEnumerable<T> items) where T : class;
+        Task RemoveRangeAsync<T>(IEnumerable<T> items) where T : class;
 
         // update methods
         /// <summary>
@@ -87,27 +88,22 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// </summary>
         /// <param name="predicate">Conditions of objects to be updated.</param>
         /// <param name="newValue">New value for the object(s).</param>
-        void Set<T>(Expression<Func<T, bool>> predicate, object newValue) where T : class;
+        Task SetAsync<T>(Expression<Func<T, bool>> predicate, object newValue) where T : class;
         /// <summary>
         /// Update the <c>oldValue</c> to be <c>newValue</c> in the database.
         /// </summary>
         /// <param name="oldValue">The object to be updated.</param>
         /// <param name="newValue">New values for the object.</param>
-        void Set<T>(T oldValue, T newValue) where T : class;
+        Task SetAsync<T>(T oldValue, T newValue) where T : class;
     }
 
-    /// <summary>
-    /// The interface defining basic methods for easy database querying without knowing SQL.
-    /// </summary>
-    /// <typeparam name="T">The target entity type</typeparam>
     public partial interface IRepository<T> where T : class
     {
-        // lookup methods
         /// <summary>
         /// Gets all records from the corresponding entity table.
         /// </summary>
         /// <returns>A collection of entities of type T.</returns>
-        IEnumerable<T> All();
+        Task<IEnumerable<T>> AllAsync();
 
         /// <summary>
         /// Find record in database using values of [Key] fields.
@@ -115,26 +111,26 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <returns>The first (also the only) object matches the keys.</returns>
-        T FindByKey(Expression<Func<T, object>> key, object value);
+        Task<T> FindByKeyAsync(Expression<Func<T, object>> key, object value);
         /// <summary>
         /// Find the first record in database matching a set of conditions.
         /// </summary>
         /// <param name="predicate">Representing the conditions to lookup.</param>
         /// <returns>The first record matches <c>predicate</c>.</returns>
-        T FindFirst(Expression<Func<T, bool>> predicate);
+        Task<T> FindFirstAsync(Expression<Func<T, bool>> predicate);
         /// <summary>
         /// Find all records in database matching a set of conditions.
         /// </summary>
         /// <param name="predicate">Representing the conditions to lookup.</param>
         /// <returns>The collection of eligible objects.</returns>
-        IEnumerable<T> FindAll(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Lookup in the database to see if the item exists in the database.
         /// </summary>
         /// <param name="item">The item to lookup.</param>
         /// <returns>True if item exists in database, false otherwise</returns>
-        bool Contains(T item);
+        Task<bool> ContainsAsync(T item);
 
         // insert methods
         /// <summary>
@@ -143,14 +139,14 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="item">The item to add.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void Add(T item);
+        Task AddAsync(T item);
         /// <summary>
         /// Add a collection of items to the database.
         /// </summary>
         /// <param name="items">The items to add.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void AddRange(IEnumerable<T> items);
+        Task AddRangeAsync(IEnumerable<T> items);
 
         // remove methods
         /// <summary>
@@ -159,21 +155,21 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="item">The item to remove.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void Remove(T item);
+        Task RemoveAsync(T item);
         /// <summary>
         /// Remove all items matching a set of conditions from the database.
         /// </summary>
         /// <param name="predicate">Representing the set of conditions.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void RemoveAll(Expression<Func<T, bool>> predicate);
+        Task RemoveAllAsync(Expression<Func<T, bool>> predicate);
         /// <summary>
         /// Remove a collection of items from the database.
         /// </summary>
         /// <param name="items">The item to remove.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        void RemoveRange(IEnumerable<T> items);
+        Task RemoveRangeAsync(IEnumerable<T> items);
 
         // update methods
         /// <summary>
@@ -181,12 +177,12 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// </summary>
         /// <param name="predicate">Conditions of objects to be updated.</param>
         /// <param name="newValue">New value for the object(s).</param>
-        void Set(Expression<Func<T, bool>> predicate, object newValue);
+        Task SetAsync(Expression<Func<T, bool>> predicate, object newValue);
         /// <summary>
         /// Update the <c>oldValue</c> to be <c>newValue</c> in the database.
         /// </summary>
         /// <param name="oldValue">The object to be updated.</param>
         /// <param name="newValue">New values for the object.</param>
-        void Set(T oldValue, T newValue);
+        Task SetAsync(T oldValue, T newValue);
     }
 }
