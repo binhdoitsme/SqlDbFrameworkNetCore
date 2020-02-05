@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using static Newtonsoft.Json.JsonConvert;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SqlDbFrameworkNetCore.Linq
 {

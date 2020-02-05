@@ -51,6 +51,12 @@ namespace SqlDbFrameworkNetCore.Repositories
             return QueryBuilder.ExecuteQuery<T>(queryStr).Any();
         }
 
+        public long Count<T>(Expression<Func<T, object>> column = null) where T : class
+        {
+            QueryBuilder.SelectCount(column);
+            return (long)QueryBuilder.ExecuteScalar();
+        }
+
         public IEnumerable<T> FindAll<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             return QueryBuilder.Select<T>().Where(predicate)
@@ -134,6 +140,11 @@ namespace SqlDbFrameworkNetCore.Repositories
         public bool Contains(T item)
         {
             return base.Contains(item);
+        }
+
+        public long Count(Expression<Func<T, object>> column = null)
+        {
+            return base.Count<T>(column);
         }
 
         public IEnumerable<T> FindAll(Expression<Func<T, bool>> predicate)

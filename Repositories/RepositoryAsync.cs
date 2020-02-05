@@ -1,34 +1,50 @@
 ﻿using SqlDbFrameworkNetCore.Helpers;
+using SqlDbFrameworkNetCore.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlDbFrameworkNetCore.Repositories
+namespace SqlDbFrameworkNetCore.Repositories.Asynchronous
 {
-    public partial class Repository : IRepository
+    public class Repository : IRepository
     {
-        public async Task AddAsync<T>(T item) where T : class
+        private readonly DbConnection Connection;
+        protected readonly IQueryBuilder QueryBuilder;
+
+        public Repository(DbConnection connection)
         {
-            await QueryBuilder.InsertInto<T>().Values(new T[] { item })
+            Connection = connection;
+            if (Connection.State != ConnectionState.Open)
+            {
+                Connection.OpenAsync();
+            }
+            QueryBuilder = connection.CreateQueryBuilder();
+        }
+
+        public Task Add<T>(T item) where T : class
+        {
+            return QueryBuilder.InsertInto<T>().Values(new T[] { item })
                         .ExecuteNonQueryAsync();
         }
 
-        public async Task AddRangeAsync<T>(IEnumerable<T> items) where T : class
+        public Task AddRange<T>(IEnumerable<T> items) where T : class
         {
             T[] addedItems = items.ToArray();
-            await QueryBuilder.InsertInto<T>().Values(addedItems)
+            return QueryBuilder.InsertInto<T>().Values(addedItems)
                         .ExecuteNonQueryAsync();
         }
 
-        public async Task<IEnumerable<T>> AllAsync<T>() where T : class
+        public Task<IEnumerable<T>> All<T>() where T : class
         {
-            return await QueryBuilder.Select<T>().ExecuteQueryAsync();
+            return QueryBuilder.Select<T>().ExecuteQueryAsync();
         }
 
-        public async Task<bool> ContainsAsync<T>(T item) where T : class
+        public async Task<bool> Contains<T>(T item) where T : class
         {
             string whereStr = $"WHERE {ObjectEvaluator.ToWhereString<T>(item)}";
             string queryStr = $"SELECT * " +
@@ -37,13 +53,19 @@ namespace SqlDbFrameworkNetCore.Repositories
             return (await QueryBuilder.ExecuteQueryAsync<T>(queryStr)).Any();
         }
 
-        public async Task<IEnumerable<T>> FindAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        public async Task<long> Count<T>(Expression<Func<T, object>> column = null) where T : class
         {
-            return await QueryBuilder.Select<T>().Where(predicate)
+            QueryBuilder.SelectCount<T>(column);
+            return (long)(await QueryBuilder.ExecuteScalarAsync());
+        }
+
+        public Task<IEnumerable<T>> FindAll<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return QueryBuilder.Select<T>().Where(predicate)
                                 .ExecuteQueryAsync();
         }
 
-        public virtual async Task<T> FindByKeyAsync<T>(Expression<Func<T, object>> key, object value) where T : class
+        public virtual async Task<T> FindByKey<T>(Expression<Func<T, object>> key, object value) where T : class
         {
             string leftHandSide = ExpressionEvaluator.BuildOrderByQueryString(key, false)
                                                     .Replace("ORDER BY ", "");
@@ -55,107 +77,116 @@ namespace SqlDbFrameworkNetCore.Repositories
             return (await QueryBuilder.ExecuteQueryAsync<T>(queryStr)).FirstOrDefault();
         }
 
-        public async Task<T> FindFirstAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        public async Task<T> FindFirst<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             return (await QueryBuilder.Select<T>().Where(predicate).Limit(1)
                     .ExecuteQueryAsync())
                     .FirstOrDefault();
         }
 
-        public async Task RemoveAsync<T>(T item) where T : class
+        public Task Remove<T>(T item) where T : class
         {
             string queryStr = $"DELETE FROM {StringToolkit.PascalToUnderscore(typeof(T).Name)} " +
                 $"WHERE {ObjectEvaluator.ToWhereString<T>(item)}";
-            await QueryBuilder.ExecuteQueryAsync<T>(queryStr);
+            return QueryBuilder.ExecuteQueryAsync<T>(queryStr);
         }
 
-        public async Task RemoveAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        public Task RemoveAll<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            await QueryBuilder.DeleteFrom<T>().Where(predicate).ExecuteNonQueryAsync();
+            return QueryBuilder.DeleteFrom<T>().Where(predicate).ExecuteNonQueryAsync();
         }
 
-        public async Task RemoveRangeAsync<T>(IEnumerable<T> items) where T : class
+        public Task RemoveRange<T>(IEnumerable<T> items) where T : class
         {
             string queryStr = $"DELETE FROM {StringToolkit.PascalToUnderscore(typeof(T).Name)} " +
                 $"WHERE {ObjectEvaluator.ToWhereString<T>(items)}";
-            await QueryBuilder.ExecuteQueryAsync<T>(queryStr);
+            return QueryBuilder.ExecuteQueryAsync<T>(queryStr);
         }
 
-        public async Task SetAsync<T>(Expression<Func<T, bool>> predicate, object newValue) where T : class
+        public Task Set<T>(Expression<Func<T, bool>> predicate, object newValue) where T : class
         {
-            await QueryBuilder.Update<T>().Set(newValue).Where(predicate).ExecuteNonQueryAsync();
+            return QueryBuilder.Update<T>().Set(newValue).Where(predicate).ExecuteNonQueryAsync();
         }
 
-        public async Task SetAsync<T>(T oldValue, T newValue) where T : class
+        public Task Set<T>(T oldValue, T newValue) where T : class
         {
             string setStr = $"SET {ObjectEvaluator.ToWhereString<T>(newValue).Replace(" AND ", ", \n")}";
             string whereStr = $"WHERE {ObjectEvaluator.ToWhereString<T>(oldValue)}";
             string queryStr = $"UPDATE {StringToolkit.PascalToUnderscore(typeof(T).Name)} " +
                                 $"{setStr} {whereStr}";
-            await QueryBuilder.ExecuteNonQueryAsync(queryStr);
+            return QueryBuilder.ExecuteNonQueryAsync(queryStr);
         }
     }
 
     public partial class Repository<T> : Repository, IRepository<T> where T : class
     {
-        public async Task AddAsync(T item)
+        public Repository(DbConnection connection) : base(connection)
         {
-            await base.AddAsync(item);
         }
 
-        public async Task AddRangeAsync(IEnumerable<T> items)
+        public Task Add(T item)
         {
-            await base.AddRangeAsync(items);    
+            return base.Add(item);
         }
 
-        public async Task<IEnumerable<T>> AllAsync()
+        public Task AddRange(IEnumerable<T> items)
         {
-            return await base.AllAsync<T>();
+            return base.AddRange(items);    
         }
 
-        public async Task<bool> ContainsAsync(T item)
+        public Task<IEnumerable<T>> All()
         {
-            return await base.ContainsAsync(item);
+            return base.All<T>();
         }
 
-        public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
+        public Task<bool> Contains(T item)
         {
-            return await base.FindAllAsync(predicate);
+            return base.Contains(item);
         }
 
-        public virtual async Task<T> FindByKeyAsync(Expression<Func<T, object>> key, object value)
+        public Task<long> Count(Expression<Func<T, object>> column = null)
         {
-            return await base.FindByKeyAsync(key, value);
+            return base.Count<T>(column);
         }
 
-        public async Task<T> FindFirstAsync(Expression<Func<T, bool>> predicate)
+        public Task<IEnumerable<T>> FindAll(Expression<Func<T, bool>> predicate)
         {
-            return await base.FindFirstAsync(predicate);
+            return base.FindAll(predicate);
         }
 
-        public async Task RemoveAsync(T item)
+        public virtual Task<T> FindByKey(Expression<Func<T, object>> key, object value)
         {
-            await base.RemoveAsync(item);
+            return base.FindByKey(key, value);
         }
 
-        public async Task RemoveAllAsync(Expression<Func<T, bool>> predicate)
+        public Task<T> FindFirst(Expression<Func<T, bool>> predicate)
         {
-            await base.RemoveAllAsync(predicate);
+            return base.FindFirst(predicate);
         }
 
-        public async Task RemoveRangeAsync(IEnumerable<T> items)
+        public Task Remove(T item)
         {
-            await base.RemoveRangeAsync(items);
+            return base.Remove(item);
         }
 
-        public async Task SetAsync(Expression<Func<T, bool>> predicate, object newValue)
+        public Task RemoveAll(Expression<Func<T, bool>> predicate)
         {
-            await base.SetAsync(predicate, newValue);
+            return base.RemoveAll(predicate);
         }
 
-        public async Task SetAsync(T oldValue, T newValue)
+        public Task RemoveRange(IEnumerable<T> items)
         {
-            await base.SetAsync(oldValue, newValue);
+            return base.RemoveRange(items);
+        }
+
+        public Task Set(Expression<Func<T, bool>> predicate, object newValue)
+        {
+            return base.Set(predicate, newValue);
+        }
+
+        public Task Set(T oldValue, T newValue)
+        {
+            return base.Set(oldValue, newValue);
         }
     }
 }

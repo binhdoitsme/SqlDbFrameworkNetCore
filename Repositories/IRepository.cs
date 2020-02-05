@@ -42,6 +42,15 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <returns>True if item exists in database, false otherwise</returns>
         bool Contains<T>(T item) where T : class;
 
+        /// <summary>
+        /// Return the number of distinct values of the specified column,
+        /// or the number of rows if no column was specified.
+        /// </summary>
+        /// <typeparam name="T">The generic type</typeparam>
+        /// <param name="column">The specified column</param>
+        /// <returns></returns>
+        long Count<T>(Expression<Func<T, object>> column = null) where T : class;
+
         // insert methods
         /// <summary>
         /// Add one item to the database.
@@ -135,6 +144,15 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="item">The item to lookup.</param>
         /// <returns>True if item exists in database, false otherwise</returns>
         bool Contains(T item);
+
+        /// <summary>
+        /// Return the number of distinct values of the specified column,
+        /// or the number of rows if no column was specified.
+        /// </summary>
+        /// <typeparam name="T">The generic type</typeparam>
+        /// <param name="column">The specified column</param>
+        /// <returns></returns>
+        long Count(Expression<Func<T, object>> column = null);
 
         // insert methods
         /// <summary>

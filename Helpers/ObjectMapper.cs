@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
-using static Newtonsoft.Json.JsonConvert;
 using SqlDbFrameworkNetCore.Linq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
+using static Newtonsoft.Json.JsonConvert;
 
 namespace SqlDbFrameworkNetCore.Helpers
 {

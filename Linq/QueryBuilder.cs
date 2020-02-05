@@ -75,6 +75,17 @@ namespace SqlDbFrameworkNetCore.Linq
             return new SelectQueryBuilder<TEntity>(this);
         }
 
+        public ISelectQueryBuilder<TEntity> SelectCount<TEntity>(Expression<Func<TEntity, object>> columns = null)
+            where TEntity : class
+        {
+            QueryStringBuilder.Append("SELECT COUNT(")
+                .Append((columns == null ? "*"
+                : $"{StringToolkit.PascalToUnderscore(((columns.Body as BinaryExpression).Right as MemberExpression).Member.Name)}"))
+                .Append(")")
+                .Append($" FROM {StringToolkit.PascalToUnderscore(typeof(TEntity).Name)}");
+            return new SelectQueryBuilder<TEntity>(this);
+        }
+
         public IUpdateQueryBuilder<TEntity> Update<TEntity>()
             where TEntity : class
         {
@@ -140,12 +151,12 @@ namespace SqlDbFrameworkNetCore.Linq
             return cmd.ExecuteNonQuery();
         }
 
-        public virtual async Task<int> ExecuteNonQueryAsync(string rawSql)
+        public virtual Task<int> ExecuteNonQueryAsync(string rawSql)
         {
             Console.WriteLine(rawSql);
             DbCommand cmd = Connection.CreateCommand();
             cmd.CommandText = rawSql;
-            return await cmd.ExecuteNonQueryAsync();
+            return cmd.ExecuteNonQueryAsync();
         }
 
         public virtual IEnumerable<T> ExecuteQuery<T>(string rawSql) where T : class
@@ -154,10 +165,38 @@ namespace SqlDbFrameworkNetCore.Linq
             return Connection.Query<T>(rawSql);
         }
 
-        public virtual async Task<IEnumerable<T>> ExecuteQueryAsync<T>(string rawSql) where T : class
+        public virtual Task<IEnumerable<T>> ExecuteQueryAsync<T>(string rawSql) where T : class
         {
             Console.WriteLine(rawSql);
-            return await Connection.QueryAsync<T>(rawSql);
+            return Connection.QueryAsync<T>(rawSql);
+        }
+
+        public object ExecuteScalar()
+        {
+            return ExecuteScalar(this.ToString());
+        }
+
+        public Task<object> ExecuteScalarAsync()
+        {
+            return ExecuteScalarAsync(this.ToString());
+        }
+
+        public object ExecuteScalar(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            DbCommand cmd = Connection.CreateCommand();
+            cmd.CommandText = rawSql;
+            Clear();
+            return cmd.ExecuteScalar();
+        }
+
+        public Task<object> ExecuteScalarAsync(string rawSql)
+        {
+            Console.WriteLine(rawSql);
+            DbCommand cmd = Connection.CreateCommand();
+            cmd.CommandText = rawSql;
+            Clear();
+            return cmd.ExecuteScalarAsync();
         }
     }
 
