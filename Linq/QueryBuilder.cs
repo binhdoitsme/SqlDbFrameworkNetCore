@@ -162,13 +162,13 @@ namespace SqlDbFrameworkNetCore.Linq
         public virtual IEnumerable<T> ExecuteQuery<T>(string rawSql) where T : class
         {
             Console.WriteLine(rawSql);
-            return Connection.Query<T>(rawSql);
+            return ObjectMapper.ToObjectCollection<T>(Connection.Query(rawSql));
         }
 
-        public virtual Task<IEnumerable<T>> ExecuteQueryAsync<T>(string rawSql) where T : class
+        public virtual async Task<IEnumerable<T>> ExecuteQueryAsync<T>(string rawSql) where T : class
         {
             Console.WriteLine(rawSql);
-            return Connection.QueryAsync<T>(rawSql);
+            return ObjectMapper.ToObjectCollection<T>(await Connection.QueryAsync(rawSql));
         }
 
         public object ExecuteScalar()

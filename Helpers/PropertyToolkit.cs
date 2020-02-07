@@ -21,7 +21,7 @@ namespace SqlDbFrameworkNetCore.Helpers
             // get the actual prop list
             foreach (PropertyDescriptor prop in propList)
             {
-                if (prop.Attributes.OfType<LazyLoadingAttribute>().Any())
+                if (prop.Attributes.OfType<ExplicitLoadingAttribute>().Any())
                 {
                     continue;
                 }

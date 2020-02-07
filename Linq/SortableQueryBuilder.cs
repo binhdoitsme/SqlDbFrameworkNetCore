@@ -67,7 +67,7 @@ namespace SqlDbFrameworkNetCore.Linq
         {
             Console.WriteLine(this.ToString());
             var rawResult = Connection.Query(this.ToString());
-            IEnumerable <TEntity> result = ObjectMapper.ToObjectCollection<TEntity>(rawResult);
+            IEnumerable<TEntity> result = ObjectMapper.ToObjectCollection<TEntity>(rawResult);
             Clear();
             return result;
         }

@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SqlDbFrameworkNetCore.Helpers
 {
-    internal static class ObjectEvaluator
+    public static class ObjectEvaluator
     {
         public static IDictionary<string, object> ToDictionary(object obj)
         {
@@ -25,7 +25,7 @@ namespace SqlDbFrameworkNetCore.Helpers
                 }
                 else
                 {
-                    if (!property.Attributes.OfType<LazyLoadingAttribute>().Any())
+                    if (!property.Attributes.OfType<ExplicitLoadingAttribute>().Any())
                     {
                         propDictionary.Add(StringToolkit.PascalToUnderscore(property.Name),
                                             property.GetValue(obj));

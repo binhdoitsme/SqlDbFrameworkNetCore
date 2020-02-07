@@ -14,7 +14,7 @@ namespace SqlDbFrameworkNetCore.Repositories.Asynchronous
     public class Repository : IRepository
     {
         private readonly DbConnection Connection;
-        protected readonly IQueryBuilder QueryBuilder;
+        public readonly IQueryBuilder QueryBuilder;
 
         public Repository(DbConnection connection)
         {

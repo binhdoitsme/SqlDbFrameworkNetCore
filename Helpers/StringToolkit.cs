@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace SqlDbFrameworkNetCore.Helpers
 {
-    static class StringToolkit
+    public static class StringToolkit
     {
         public static string PascalToUnderscore(string input)
         {
