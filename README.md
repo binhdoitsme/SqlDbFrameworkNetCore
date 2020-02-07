@@ -8,8 +8,21 @@ Then, decorate the field with [SqlDbFrameworkNetCore.Linq.ExplicitLoadingAttribu
 	public class ExampleEntity : BaseEntity 
 	{
 		// code removed
+		[Key]
+		public int Id { get; set; }
+		
 		[ExplicitLoading]
 		public IEnumerable<AssociatedEntity> AssociatedField { get; set; }
+	}
+```
+Remember to specify the referenced foreign key using [System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute]'s constructor:
+```
+	public class AssociatedEntity
+	{
+		// some code removed
+		
+		[ForeignKey("ExampleEntity.Id")]
+		public int ExampleEntityId { get; set; }
 	}
 ```
 Then when using the field from outside, use the Load(...) operation followed by setting the QueryBuilder to load the associated field:
@@ -38,3 +51,8 @@ Using the Repository class:
 
 # Note
 If there are business operations concerning data that can be encapsulated, write a separate class extends Repository<T> then supply the business operations.
+Also, foreign key must always be ```int```, other types are not supported and NOT RECOMMENDED. The foreign key specification convention is:
+```
+	[ForeignKey("{EntityTypeName}.{ReferencedFieldName}")]
+	public int [EntityTypeName][ReferencedFieldName] { get; set; }
+```
