@@ -12,25 +12,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestModels\**" />
+    <EmbeddedResource Remove="TestModels\**" />
+    <None Remove="TestModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Program.cs" />
-    <Compile Remove="TestModels\Course.cs" />
-    <Compile Remove="TestModels\CourseClass.cs" />
-    <Compile Remove="TestModels\CourseType.cs" />
-    <Compile Remove="TestModels\Phone.cs" />
-    <Compile Remove="TestModels\PhoneManufacturer.cs" />
-    <Compile Remove="TestModels\Registration.cs" />
-    <Compile Remove="TestModels\Semester.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Program.cs" />
-    <None Include="TestModels\Course.cs" />
-    <None Include="TestModels\CourseClass.cs" />
-    <None Include="TestModels\CourseType.cs" />
-    <None Include="TestModels\Phone.cs" />
-    <None Include="TestModels\PhoneManufacturer.cs" />
-    <None Include="TestModels\Registration.cs" />
-    <None Include="TestModels\Semester.cs" />
   </ItemGroup>
 
   <ItemGroup>
