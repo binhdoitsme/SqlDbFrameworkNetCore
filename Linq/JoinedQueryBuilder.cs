@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
@@ -18,6 +19,7 @@ namespace SqlDbFrameworkNetCore.Linq
         public IJoinedQueryBuilder<TEntity, T1> On(Expression<Func<TEntity, T1, bool>> predicate)
         {
             string onStr = ExpressionEvaluator.BuildOnConditionString(predicate);
+            RefactorAlias(predicate);
             QueryStringBuilder.Append($"{onStr}");
             return this;
         }
@@ -46,6 +48,16 @@ namespace SqlDbFrameworkNetCore.Linq
             var result = ObjectMapper.ToCompositeObjectCollection<TEntity, T1>(queryResult);
             return result;
         }
+
+        async Task<IEnumerable<CompositeModel<TEntity, T1>>> IJoinedQueryBuilder<TEntity, T1>.ExecuteQueryAsync()
+        {
+            // get data from db 
+            var queryResult = await Connection.QueryAsync(this.ToString());
+
+            // and map to attributes
+            var result = ObjectMapper.ToCompositeObjectCollection<TEntity, T1>(queryResult);
+            return result;
+        }
     }
 
     internal class JoinedQueryBuilder<TEntity, T1, T2> 
@@ -56,6 +68,7 @@ namespace SqlDbFrameworkNetCore.Linq
         public IJoinedQueryBuilder<TEntity, T1, T2> On(Expression<Func<TEntity, T1, T2, bool>> predicate)
         {
             string onStr = ExpressionEvaluator.BuildOnConditionString(predicate);
+            RefactorAlias(predicate);
             QueryStringBuilder.Append($"{onStr}");
             return this;
         }
@@ -72,6 +85,16 @@ namespace SqlDbFrameworkNetCore.Linq
         {
             // get data from db 
             var queryResult = Connection.Query(this.ToString());
+
+            // and map to attributes
+            var result = ObjectMapper.ToCompositeObjectCollection<TEntity, T1, T2>(queryResult);
+            return result;
+        }
+
+        async Task<IEnumerable<CompositeModel<TEntity, T1, T2>>> IJoinedQueryBuilder<TEntity, T1, T2>.ExecuteQueryAsync()
+        {
+            // get data from db 
+            var queryResult = await Connection.QueryAsync(this.ToString());
 
             // and map to attributes
             var result = ObjectMapper.ToCompositeObjectCollection<TEntity, T1, T2>(queryResult);
@@ -95,6 +118,7 @@ namespace SqlDbFrameworkNetCore.Linq
         public IJoinedQueryBuilder<TEntity, T1, T2, T3> On(Expression<Func<TEntity, T1, T2, T3, bool>> predicate)
         {
             string onStr = ExpressionEvaluator.BuildOnConditionString(predicate);
+            RefactorAlias(predicate);
             QueryStringBuilder.Append($" {onStr}");
             return this;
         }
@@ -111,6 +135,16 @@ namespace SqlDbFrameworkNetCore.Linq
         {
             // get data from db 
             var queryResult = Connection.Query(this.ToString());
+
+            // and map to attributes
+            var result = ObjectMapper.ToCompositeObjectCollection<TEntity, T1, T2, T3>(queryResult);
+            return result;
+        }
+
+        async Task<IEnumerable<CompositeModel<TEntity, T1, T2, T3>>> IJoinedQueryBuilder<TEntity, T1, T2, T3>.ExecuteQueryAsync()
+        {
+            // get data from db 
+            var queryResult = await Connection.QueryAsync(this.ToString());
 
             // and map to attributes
             var result = ObjectMapper.ToCompositeObjectCollection<TEntity, T1, T2, T3>(queryResult);

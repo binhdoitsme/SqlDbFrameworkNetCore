@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 
 namespace SqlDbFrameworkNetCore.Helpers
 {
@@ -37,13 +38,23 @@ namespace SqlDbFrameworkNetCore.Helpers
             {
                 var getMethod = property.GetGetMethod();
                 // foreign key must always be integer
-                var getDelegate = (Func<int>)getMethod.CreateDelegate(typeof(Func<int>), target);
+                // var getDelegate = (Func<int>)getMethod.CreateDelegate(typeof(Func<int>), target);
+                var getDelegate = GetConvertedGetDelegate<object>(getMethod, target);
                 // convention: [ForeignKeyReferenceClass][FieldName]
                 string key = $"{target.GetType().Name}{property.Name}";
-                object value = getDelegate.Invoke();
+                object value = getDelegate();
                 propertyValuePairs.Add(key, value);
             }
             return propertyValuePairs;
+        }
+
+        private static Func<T> GetConvertedGetDelegate<T>(MethodInfo method, object target)
+        {
+            Expression targetExpr = Expression.Constant(target);
+            Expression methodExpr = Expression.Call(targetExpr, method);
+            Expression convertedExpr = Expression.Convert(methodExpr, typeof(T));
+            Expression<Func<T>> lambda = Expression.Lambda<Func<T>>(convertedExpr);
+            return lambda.Compile();
         }
     }
 }

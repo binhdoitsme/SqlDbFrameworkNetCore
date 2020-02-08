@@ -86,6 +86,14 @@ namespace SqlDbFrameworkNetCore.Linq
             return new SelectQueryBuilder<TEntity>(this);
         }
 
+        public ISelectQueryBuilder<TEntity> SelectDistinct<TEntity>(params Expression<Func<TEntity, object>>[] columns)
+            where TEntity : class
+        {
+            Select(columns);
+            QueryStringBuilder.Replace("SELECT ", "SELECT DISTINCT ");
+            return new SelectQueryBuilder<TEntity>(this);
+        }
+
         public IUpdateQueryBuilder<TEntity> Update<TEntity>()
             where TEntity : class
         {

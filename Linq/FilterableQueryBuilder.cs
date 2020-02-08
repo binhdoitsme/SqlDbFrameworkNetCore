@@ -38,7 +38,7 @@ namespace SqlDbFrameworkNetCore.Linq
             IDictionary<Type, string> aliasMap = ExpressionEvaluator.GetAliasArray(parameters);
             foreach (KeyValuePair<Type, string> alias in aliasMap)
             {
-                Regex rg = new Regex($"{StringToolkit.PascalToUnderscore(alias.Key.Name)} [a-z]*"); // already has alias
+                Regex rg = new Regex($" {StringToolkit.PascalToUnderscore(alias.Key.Name)} [a-z_]*"); // already has alias
                 string currentQueryValue = this.ToString();
                 MatchCollection matches = rg.Matches(currentQueryValue);
                 if (matches.Count != 0)
@@ -46,17 +46,17 @@ namespace SqlDbFrameworkNetCore.Linq
                     foreach (Match m in matches)
                     {
                         QueryStringBuilder.Replace(m.Value,
-                            $"{StringToolkit.PascalToUnderscore(alias.Key.Name)} {alias.Value} ");
+                            $" {StringToolkit.PascalToUnderscore(alias.Key.Name)} {alias.Value} ");
                     }
                 }
                 else
                 {
-                    rg = new Regex($"{StringToolkit.PascalToUnderscore(alias.Key.Name)}$");
+                    rg = new Regex($" {StringToolkit.PascalToUnderscore(alias.Key.Name)}$");
                     matches = rg.Matches(currentQueryValue);
                     foreach (Match m in matches)
                     {
                         QueryStringBuilder.Replace(m.Value,
-                            $"{StringToolkit.PascalToUnderscore(alias.Key.Name)} {alias.Value} ");
+                            $" {StringToolkit.PascalToUnderscore(alias.Key.Name)} {alias.Value} ");
                     }
                 }
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SqlDbFrameworkNetCore.Linq
 {
@@ -13,6 +14,7 @@ namespace SqlDbFrameworkNetCore.Linq
         new IJoinedQueryBuilder<TEntity, T1, T2> InnerJoin<T2>(string alias);
 
         new IEnumerable<CompositeModel<TEntity, T1>> ExecuteQuery();
+        new Task<IEnumerable<CompositeModel<TEntity, T1>>> ExecuteQueryAsync();
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2> 
@@ -23,6 +25,7 @@ namespace SqlDbFrameworkNetCore.Linq
         new IJoinedQueryBuilder<TEntity, T1, T2, T3> InnerJoin<T3>(string alias);
 
         new IEnumerable<CompositeModel<TEntity, T1, T2>> ExecuteQuery();
+        new Task<IEnumerable<CompositeModel<TEntity, T1, T2>>> ExecuteQueryAsync();
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3> 
@@ -33,6 +36,7 @@ namespace SqlDbFrameworkNetCore.Linq
         new IJoinedQueryBuilder<TEntity, T1, T2, T3, T4> InnerJoin<T4>(string alias);
 
         new IEnumerable<CompositeModel<TEntity, T1, T2, T3>> ExecuteQuery();
+        new Task<IEnumerable<CompositeModel<TEntity, T1, T2, T3>>> ExecuteQueryAsync();
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4> 
@@ -43,6 +47,7 @@ namespace SqlDbFrameworkNetCore.Linq
         new IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5> InnerJoin<T5>(string alias);
 
         new IEnumerable<CompositeModel<TEntity, T1, T2, T3, T4>> ExecuteQuery();
+        new Task<IEnumerable<CompositeModel<TEntity, T1, T2, T3, T4>>> ExecuteQueryAsync();
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5> 
@@ -63,6 +68,7 @@ namespace SqlDbFrameworkNetCore.Linq
         new IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6, T7> InnerJoin<T7>(string alias);
 
         new IEnumerable<CompositeModel<TEntity, T1, T2, T3, T4, T5, T6>> ExecuteQuery();
+        new Task<IEnumerable<CompositeModel<TEntity, T1, T2, T3, T4, T5, T6>>> ExecuteQueryAsync();
     }
 
     public interface IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6, T7> 
@@ -72,5 +78,6 @@ namespace SqlDbFrameworkNetCore.Linq
         IJoinedQueryBuilder<TEntity, T1, T2, T3, T4, T5, T6, T7> Where(Expression<Func<TEntity, T1, T2, T3, T4, T5, T6, T7, bool>> predicate);
 
         new IEnumerable<CompositeModel<TEntity, T1, T2, T3, T4, T5, T6, T7>> ExecuteQuery();
+        new Task<IEnumerable<CompositeModel<TEntity, T1, T2, T3, T4, T5, T6, T7>>> ExecuteQueryAsync();
     }
 }

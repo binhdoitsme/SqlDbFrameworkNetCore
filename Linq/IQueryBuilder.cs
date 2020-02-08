@@ -11,6 +11,7 @@ namespace SqlDbFrameworkNetCore.Linq
     {
         ISelectQueryBuilder<TEntity> Select<TEntity>(params Expression<Func<TEntity, object>>[] columns) where TEntity : class;
         ISelectQueryBuilder<TEntity> SelectCount<TEntity>(Expression<Func<TEntity, object>> columns = null) where TEntity : class;
+        ISelectQueryBuilder<TEntity> SelectDistinct<TEntity>(params Expression<Func<TEntity, object>>[] columns) where TEntity : class;
         IUpdateQueryBuilder<TEntity> Update<TEntity>() where TEntity : class;
         IInsertQueryBuilder<TEntity> InsertInto<TEntity>() where TEntity : class;
         IDeleteQueryBuilder<TEntity> DeleteFrom<TEntity>() where TEntity : class;
