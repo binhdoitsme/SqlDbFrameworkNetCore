@@ -52,12 +52,12 @@ There are two mapping attributes:
 	DbConnection connection; 
 	[...]
 	IRepository repo = new Repository(connection); // non-generic
-	IRepository<ExampleEntity> genericRepo = new Repository<ExampleEntity>(); // generic
+	IRepository<ExampleEntity> genericRepo = new Repository<ExampleEntity>(connection); // generic
 ```
 
 # Note
 If there are business operations concerning data that can be encapsulated, write a separate class extends Repository<T> then supply the business operations.
-Also, foreign key must always be ```int```, other types are not supported and NOT RECOMMENDED. The foreign key specification convention is:
+Also, foreign key must always be ```int```, other types are NOT RECOMMENDED. The foreign key specification convention is:
 ```
 	[ForeignKey("{EntityTypeName}.{ReferencedFieldName}")]
 	public int [EntityTypeName][ReferencedFieldName] { get; set; }
