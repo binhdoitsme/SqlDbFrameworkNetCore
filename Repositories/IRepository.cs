@@ -34,6 +34,20 @@ namespace SqlDbFrameworkNetCore.Repositories
         /// <param name="predicate">Representing the conditions to lookup.</param>
         /// <returns>The collection of eligible objects.</returns>
         IEnumerable<T> FindAll<T>(Expression<Func<T, bool>> predicate) where T : class;
+        /// <summary>
+        /// Retrieve the value of the target <c>item</c>
+        /// </summary>
+        /// <typeparam name="T">The item type</typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        T Retrieve<T>(T item) where T : class;
+        /// <summary>
+        /// Retrieve the values of the target <c>items</c>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        IEnumerable<T> RetrieveRange<T>(IEnumerable<T> items) where T : class;
 
         /// <summary>
         /// Lookup in the database to see if the item exists in the database.

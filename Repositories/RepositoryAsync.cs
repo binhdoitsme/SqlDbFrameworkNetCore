@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SqlDbFrameworkNetCore.Repositories.Asynchronous
@@ -116,6 +117,22 @@ namespace SqlDbFrameworkNetCore.Repositories.Asynchronous
                                 $"{setStr} {whereStr}";
             return QueryBuilder.ExecuteNonQueryAsync(queryStr);
         }
+
+        public async Task<T> Retrieve<T>(T item) where T : class
+        {
+            string whereStr = $"WHERE {ObjectEvaluator.ToWhereString<T>(item)}";
+            var result = await QueryBuilder.Select<T>().Where(whereStr).ExecuteQueryAsync();
+            return result.FirstOrDefault();
+        }
+
+        public Task<IEnumerable<T>> RetrieveRange<T>(IEnumerable<T> items) where T : class
+        {
+            string whereConditions = items.Select(item => $"({ObjectEvaluator.ToWhereString<T>(item)}) OR")
+                                            .Aggregate((i1, i2) => $"{i1} {i2}").Trim();
+            Regex rg = new Regex(" OR$");
+            string whereStr = $"WHERE {rg.Replace(whereConditions, "")}";
+            return QueryBuilder.Select<T>().Where(whereStr).ExecuteQueryAsync();
+        }
     }
 
     public partial class Repository<T> : Repository, IRepository<T> where T : class
@@ -187,6 +204,16 @@ namespace SqlDbFrameworkNetCore.Repositories.Asynchronous
         public Task Set(T oldValue, T newValue)
         {
             return base.Set(oldValue, newValue);
+        }
+
+        public Task<T> Retrieve(T item)
+        {
+            return base.Retrieve(item);
+        }
+
+        public Task<IEnumerable<T>> RetrieveRange(IEnumerable<T> items)
+        {
+            return base.RetrieveRange(items);
         }
     }
 }

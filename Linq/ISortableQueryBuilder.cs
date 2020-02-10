@@ -13,6 +13,7 @@ namespace SqlDbFrameworkNetCore.Linq
         ISortableQueryBuilder<TEntity> ThenBy(Expression<Func<TEntity, object>> key);
         ISortableQueryBuilder<TEntity> ThenByDescending(Expression<Func<TEntity, object>> key);
 
+        ISortableQueryBuilder<TEntity> Where(string whereStr);
         new ISortableQueryBuilder<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         new ISortableQueryBuilder<TEntity> Limit(int count);
         new ISortableQueryBuilder<TEntity> Offset(int count);

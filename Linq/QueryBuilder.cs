@@ -45,8 +45,8 @@ namespace SqlDbFrameworkNetCore.Linq
         public IInsertQueryBuilder<TEntity> InsertInto<TEntity>() where TEntity : class
         {
             QueryStringBuilder.Append($"INSERT INTO " +
-                $"{StringToolkit.PascalToUnderscore(typeof(TEntity).Name)} " +
-                $"{PropertyToolkit.BuildInsertString(PropertyToolkit.GetInsertProperties<TEntity>())}");
+                $"{StringToolkit.PascalToUnderscore(typeof(TEntity).Name)} "
+                /* + $"{PropertyToolkit.BuildInsertString(PropertyToolkit.GetInsertProperties<TEntity>())}"*/);
             return new InsertQueryBuilder<TEntity>(this);
         }
 
@@ -159,12 +159,15 @@ namespace SqlDbFrameworkNetCore.Linq
             return cmd.ExecuteNonQuery();
         }
 
-        public virtual Task<int> ExecuteNonQueryAsync(string rawSql)
+        public virtual async Task<int> ExecuteNonQueryAsync(string rawSql)
         {
             Console.WriteLine(rawSql);
             DbCommand cmd = Connection.CreateCommand();
+            DbTransaction transaction = await Connection.BeginTransactionAsync();
             cmd.CommandText = rawSql;
-            return cmd.ExecuteNonQueryAsync();
+            var affectedRows = await cmd.ExecuteNonQueryAsync();
+            await transaction.CommitAsync();
+            return affectedRows;
         }
 
         public virtual IEnumerable<T> ExecuteQuery<T>(string rawSql) where T : class

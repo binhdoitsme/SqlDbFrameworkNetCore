@@ -44,6 +44,12 @@ namespace SqlDbFrameworkNetCore.Linq
             return this;
         }
 
+        public ISortableQueryBuilder<TEntity> Where(string whereStr)
+        {
+            QueryStringBuilder.Append($" {whereStr}");
+            return this;
+        }
+
         ISortableQueryBuilder<TEntity> ISortableQueryBuilder<TEntity>.Where(Expression<Func<TEntity, bool>> predicate)
         {
             string whereString = ExpressionEvaluator.BuildWhereQueryString(predicate);

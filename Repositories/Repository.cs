@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace SqlDbFrameworkNetCore.Repositories
 {
@@ -114,6 +115,22 @@ namespace SqlDbFrameworkNetCore.Repositories
                                 $"{setStr} {whereStr}";
             QueryBuilder.ExecuteNonQuery(queryStr);
         }
+
+        public T Retrieve<T>(T item) where T : class
+        {
+            string whereStr = $"WHERE {ObjectEvaluator.ToWhereString<T>(item)}";
+            var result = QueryBuilder.Select<T>().Where(whereStr).ExecuteQuery();
+            return result.FirstOrDefault();
+        }
+
+        public IEnumerable<T> RetrieveRange<T>(IEnumerable<T> items) where T : class
+        {
+            string whereConditions = items.Select(item => $"({ObjectEvaluator.ToWhereString<T>(item)}) OR")
+                                            .Aggregate((i1, i2) => $"{i1} {i2}").Trim();
+            Regex rg = new Regex(" OR$");
+            string whereStr = $"WHERE {rg.Replace(whereConditions, "")}";
+            return QueryBuilder.Select<T>().Where(whereStr).ExecuteQuery();
+        }
     }
 
     public partial class Repository<T> : Repository, IRepository<T> where T : class
@@ -186,6 +203,16 @@ namespace SqlDbFrameworkNetCore.Repositories
         public void Set(T oldValue, T newValue)
         {
             base.Set(oldValue, newValue);
+        }
+
+        public T Retrieve(T item)
+        {
+            return base.Retrieve(item);
+        }
+
+        public IEnumerable<T> RetrieveRange(T[] items)
+        {
+            return base.Retrieve(items);
         }
     }
 }
